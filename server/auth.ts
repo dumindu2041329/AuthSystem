@@ -16,8 +16,12 @@ declare global {
 }
 
 // Simple MD5 hash - easier to debug
-function hashPassword(password: string): string {
+export function hash(password: string): string {
   return createHash('md5').update(password).digest('hex');
+}
+
+function hashPassword(password: string): string {
+  return hash(password);
 }
 
 // Debug the string before hashing
@@ -33,6 +37,8 @@ function comparePasswords(supplied: string, stored: string): boolean {
   const hashedSupplied = hashPassword(supplied);
   return hashedSupplied === stored;
 }
+
+
 
 export function setupAuth(app: Express) {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
@@ -79,16 +85,9 @@ export function setupAuth(app: Express) {
         // Hash the provided password with proper logging
         const hashedPassword = logAndHashPassword(password);
         
-        // Special debug check for the recent user with known credentials
-        if (user.username === "dumindu2041329") {
-          console.log("Detected known user, attempting special debug login");
-          console.log(`Expected hash: ${user.password}`);
-          console.log(`Actual hash: ${hashedPassword}`);
-          
-          // Force login for debugging if this is our test user
-          console.log("Allowing login for debugging purposes");
-          return done(null, user);
-        }
+        // Check credentials for all users - no special backdoors
+        console.log(`Expected hash: ${user.password}`);
+        console.log(`Actual hash: ${hashedPassword}`);
         
         // Try exact match
         if (hashedPassword === user.password) {
@@ -237,6 +236,18 @@ export function setupAuth(app: Express) {
       res.status(401).json({ message: "Unauthorized" });
     }
   });
+  
+  // For debugging only - this would not be in a production app
+  // Allows direct generation of a reset token to test the flow
+
+
+
+  
+
+
+
+
+
 }
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {

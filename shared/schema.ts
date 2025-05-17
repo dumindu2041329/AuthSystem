@@ -31,6 +31,8 @@ export const users = pgTable("users", {
   firstName: varchar("first_name", { length: 255 }),
   lastName: varchar("last_name", { length: 255 }),
   profileImageUrl: varchar("profile_image_url", { length: 255 }),
+  resetToken: varchar("reset_token", { length: 255 }),
+  resetTokenExpiry: timestamp("reset_token_expiry"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -51,8 +53,28 @@ export const loginUserSchema = z.object({
   password: z.string(),
 });
 
+// Schema for forgot password
+export const forgotPasswordSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+});
+
+// Schema for reset password
+export const resetPasswordSchema = z.object({
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters",
+  }),
+  confirmPassword: z.string().min(6),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type LoginUser = z.infer<typeof loginUserSchema>;
+export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
 // Type definition for user with password (internal use)
 export type UserWithPassword = {
@@ -63,6 +85,8 @@ export type UserWithPassword = {
   firstName?: string | null;
   lastName?: string | null;
   profileImageUrl?: string | null;
+  resetToken?: string | null;
+  resetTokenExpiry?: Date | null;
   createdAt?: Date | null;
   updatedAt?: Date | null;
 };
