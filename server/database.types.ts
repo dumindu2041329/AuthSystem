@@ -20,6 +20,8 @@ export interface Database {
           first_name: string | null
           last_name: string | null
           profile_image_url: string | null
+          reset_token: string | null
+          reset_token_expiry: string | null
         }
         Insert: {
           id?: number
@@ -31,6 +33,8 @@ export interface Database {
           first_name?: string | null
           last_name?: string | null
           profile_image_url?: string | null
+          reset_token?: string | null
+          reset_token_expiry?: string | null
         }
         Update: {
           id?: number
@@ -42,6 +46,8 @@ export interface Database {
           first_name?: string | null
           last_name?: string | null
           profile_image_url?: string | null
+          reset_token?: string | null
+          reset_token_expiry?: string | null
         }
         Relationships: []
       }

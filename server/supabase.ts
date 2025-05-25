@@ -1,11 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Supabase connection details from environment variables
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';
 
+if (!supabaseUrl || !supabaseKey) {
+  console.warn('Supabase URL or key is missing! Please check your .env file.');
+}
+
 // Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false
+  }
+});
 
 // Test Supabase connection
 export async function testSupabaseConnection(): Promise<boolean> {
@@ -60,6 +72,11 @@ export async function listSupabaseTables() {
     };
   } catch (error) {
     console.error('Error listing tables:', error);
-    return { error };
+    return {
+      tables: {
+        users: { exists: false, error },
+        sessions: { exists: false, error }
+      }
+    };
   }
 }

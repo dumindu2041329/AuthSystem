@@ -3,13 +3,17 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated, hash } from "./auth";
 import { testSupabaseConnection, listSupabaseTables } from "./supabase";
-import { testDatabaseConnection } from "./db";
 import { forgotPasswordSchema, resetPasswordSchema } from "@shared/schema";
 import { sendEmail } from "./mailer";
+import { setupGoogleAuth } from "./googleAuth";
+
 
 export function registerRoutes(app: Express): Server {
   // Set up authentication
   setupAuth(app);
+  // Set up Google authentication
+  setupGoogleAuth(app);
+
 
   // Protected route example
   app.get("/api/protected", isAuthenticated, (req: Request, res) => {
@@ -25,33 +29,6 @@ export function registerRoutes(app: Express): Server {
       });
     } else {
       res.status(401).json({ message: "Unauthorized" });
-    }
-  });
-  
-  // Test database connection route
-  app.get("/api/database-test", async (req, res) => {
-    try {
-      const isConnected = await testDatabaseConnection();
-      
-      if (isConnected) {
-        res.json({ 
-          success: true, 
-          message: "Successfully connected to Supabase PostgreSQL database",
-          timestamp: new Date().toISOString()
-        });
-      } else {
-        res.status(500).json({ 
-          success: false, 
-          message: "Failed to connect to Supabase PostgreSQL database" 
-        });
-      }
-    } catch (error) {
-      console.error("Database test error:", error);
-      res.status(500).json({ 
-        success: false, 
-        message: "Error testing database connection",
-        error: String(error)
-      });
     }
   });
   

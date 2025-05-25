@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Loader } from "@/components/ui/loader";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { GoogleAuthButton } from "@/components/ui/google-auth-button";
+
 
 export default function Register() {
   const { user, registerMutation } = useAuth();
@@ -50,21 +52,7 @@ export default function Register() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  // If already authenticated, show a different message
-  if (user) {
-    return (
-      <AuthLayout
-        title="You're already signed in"
-        subtitle="You don't need to create a new account"
-      >
-        <div className="flex flex-col space-y-4">
-          <Button asChild>
-            <Link href="/dashboard">Go to Dashboard</Link>
-          </Button>
-        </div>
-      </AuthLayout>
-    );
-  }
+
 
   return (
     <AuthLayout 
@@ -212,6 +200,21 @@ export default function Register() {
           </Button>
         </form>
       </Form>
+
+      <div className="mt-4 relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white dark:bg-gray-900 px-2 text-gray-500">
+            Or continue with
+          </span>
+        </div>
+      </div>
+      
+      <div className="mt-4">
+        <GoogleAuthButton />
+      </div>
 
       <div className="mt-6 text-center">
         <p className="text-gray-600">

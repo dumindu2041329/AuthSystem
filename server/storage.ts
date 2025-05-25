@@ -266,7 +266,7 @@ export class SupabaseStorage implements IStorage {
   }
 }
 
-// Fallback to memory storage if Supabase connection fails
+// In-memory storage implementation as fallback
 export class MemStorage implements IStorage {
   private users: UserWithPassword[] = [];
   private nextId = 1;
@@ -429,11 +429,11 @@ export class MemStorage implements IStorage {
 let storageImpl: IStorage;
 
 try {
-  // Try to use Supabase storage
+  // Try to use Supabase storage first
   storageImpl = new SupabaseStorage();
   console.log("Using Supabase storage");
 } catch (error) {
-  // Fallback to memory storage
+  // Fallback to memory storage if Supabase connection fails
   console.warn("Supabase initialization failed, falling back to in-memory storage:", error);
   storageImpl = new MemStorage();
   console.log("Using in-memory storage");
